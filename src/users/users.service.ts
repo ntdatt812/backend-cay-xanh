@@ -16,16 +16,16 @@ export class UsersService {
     const hash = hashSync(password, salt);
     return hash
   }
-  // create(createUserDto: CreateUserDto) {
-  //   return 'This action adds a new user';
-  // }
-  async create(email: string, password: string, name: string) {
-    const hashPassword = this.hashPassword(password);
+  async create(createUserDto: CreateUserDto) {
+    const hashPassword = this.hashPassword(createUserDto.password);
     const user = await this.userModel.create({
-      email, password: hashPassword, name
+      email: createUserDto.email,
+      password: hashPassword,
+      name: createUserDto.name
     })
     return user;
   }
+
 
   findAll() {
     return `This action returns all users`;
