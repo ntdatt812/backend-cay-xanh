@@ -12,6 +12,7 @@ export class AppController {
     private configService: ConfigService,
     private authService: AuthService
   ) { }
+
   @UseGuards(LocalAuthGuard)
   @Post("/login")
   handleLogin(@Request() req) {
@@ -19,7 +20,7 @@ export class AppController {
   }
 
 
-  @UseGuards(JwtAuthGuard)
+  //@UseGuards(JwtAuthGuard)
   @Get('profile')
   getProfile(@Request() req) {
     return req.user;
