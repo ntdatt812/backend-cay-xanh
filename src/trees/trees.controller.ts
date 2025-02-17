@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
 import { TreesService } from './trees.service';
 import { CreateTreeDto } from './dto/create-tree.dto';
 import { UpdateTreeDto } from './dto/update-tree.dto';
@@ -16,8 +16,12 @@ export class TreesController {
   }
 
   @Get()
-  findAll() {
-    return this.treesService.findAll();
+  findAll(
+    @Query("page") currentPage: string,
+    @Query("limit") limit: string,
+    @Query() qs: string,
+  ) {
+    return this.treesService.findAll(+currentPage, +limit, qs);
   }
 
   @Get(':id')
@@ -26,12 +30,20 @@ export class TreesController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateTreeDto: UpdateTreeDto) {
-    return this.treesService.update(+id, updateTreeDto);
+  update(
+    @Param('id') id: string,
+    @Body() updateTreeDto: UpdateTreeDto,
+    @User() user: IUser
+  ) {
+    return this.treesService.update(id, updateTreeDto, user);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.treesService.remove(+id);
+  remove(
+    @Param('id') id: string,
+    @User() user: IUser
+
+  ) {
+    return this.treesService.remove(id, user);
   }
 }
