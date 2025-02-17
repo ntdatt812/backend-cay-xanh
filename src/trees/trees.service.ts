@@ -40,8 +40,7 @@ export class TreesService {
     const result = await this.treeModel.find(filter)
       .skip(offset)
       .limit(defaultLimit)
-      // @ts-ignore: Unreachable code error
-      .sort(sort)
+      .sort(sort as any)
       .populate(population)
       .exec();
 
