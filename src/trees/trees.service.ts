@@ -4,6 +4,7 @@ import { UpdateTreeDto } from './dto/update-tree.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Tree, TreeDocument } from './schemas/tree.schema';
 import { SoftDeleteModel } from 'soft-delete-plugin-mongoose';
+import { IUser } from 'src/users/users.interface';
 
 @Injectable()
 export class TreesService {
@@ -12,8 +13,17 @@ export class TreesService {
     @InjectModel(Tree.name)
     private treeModel: SoftDeleteModel<TreeDocument>) { }
 
-  create(createTreeDto: CreateTreeDto) {
-    return this.treeModel.create({ ...createTreeDto })
+  create(createTreeDto: CreateTreeDto, user: IUser) {
+    return this.treeModel.create(
+      {
+        ...createTreeDto,
+        createdBy: {
+          _id: user._id,
+          email: user.email
+        }
+      }
+
+    )
   }
 
   findAll() {
