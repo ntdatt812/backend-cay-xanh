@@ -1,11 +1,19 @@
 import { Injectable } from '@nestjs/common';
 import { CreateTreeDto } from './dto/create-tree.dto';
 import { UpdateTreeDto } from './dto/update-tree.dto';
+import { InjectModel } from '@nestjs/mongoose';
+import { Tree, TreeDocument } from './schemas/tree.schema';
+import { SoftDeleteModel } from 'soft-delete-plugin-mongoose';
 
 @Injectable()
 export class TreesService {
+
+  constructor(
+    @InjectModel(Tree.name)
+    private treeModel: SoftDeleteModel<TreeDocument>) { }
+
   create(createTreeDto: CreateTreeDto) {
-    return 'This action adds a new tree';
+    return this.treeModel.create({ ...createTreeDto })
   }
 
   findAll() {
