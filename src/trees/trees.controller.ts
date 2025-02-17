@@ -2,7 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestj
 import { TreesService } from './trees.service';
 import { CreateTreeDto } from './dto/create-tree.dto';
 import { UpdateTreeDto } from './dto/update-tree.dto';
-import { User } from 'src/decorator/customize';
+import { ResponseMessage, User } from 'src/decorator/customize';
 import { IUser } from 'src/users/users.interface';
 
 @Controller('trees')
@@ -16,6 +16,7 @@ export class TreesController {
   }
 
   @Get()
+  @ResponseMessage("Fetch list tree with paginate")
   findAll(
     @Query("page") currentPage: string,
     @Query("limit") limit: string,
