@@ -18,8 +18,8 @@ export class TreesController {
   @Get()
   @ResponseMessage("Fetch list tree with paginate")
   findAll(
-    @Query("page") currentPage: string,
-    @Query("limit") limit: string,
+    @Query("current") currentPage: string,
+    @Query("pageSize") limit: string,
     @Query() qs: string,
   ) {
     return this.treesService.findAll(+currentPage, +limit, qs);
