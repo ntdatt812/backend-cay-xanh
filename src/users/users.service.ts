@@ -43,7 +43,6 @@ export class UsersService {
     return userCreate;
   }
 
-
   async findAll(currentPage: number, limit: number, qs: string) {
     const { filter, sort, population } = aqp(qs);
     delete filter.page;
@@ -138,5 +137,14 @@ export class UsersService {
       role: "USER"
     })
     return newRegister;
+  }
+
+  updateUserToken = async (refreshToken: string, _id: string) => {
+    return await this.userModel.updateOne(
+      { _id },
+      {
+        refreshToken
+      })
+
   }
 }
