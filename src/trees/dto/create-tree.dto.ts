@@ -3,13 +3,13 @@ import { IsEmail, IsEmpty, IsNotEmpty, IsNotEmptyObject, IsObject, ValidateNeste
 import mongoose from "mongoose";
 
 
-class LoaiCay {
-    @IsNotEmpty({ message: 'Năm trồng không được để trống' })
-    _id: mongoose.Schema.Types.ObjectId;
+// class LoaiCay {
+//     @IsNotEmpty({ message: 'Id loại cây không được để trống' })
+//     _id: mongoose.Schema.Types.ObjectId;
 
-    @IsNotEmpty({ message: 'Năm trồng không được để trống' })
-    tenloaicay: string
-}
+//     @IsNotEmpty({ message: 'Tên loại cây không được để trống' })
+//     tenloaicay: string
+// }
 
 //data tranfer object
 export class CreateTreeDto {
@@ -25,10 +25,17 @@ export class CreateTreeDto {
     @IsNotEmpty({ message: 'Năm trồng không được để trống' })
     namtrong: number;
 
-    @IsNotEmptyObject()
-    @IsObject()
-    @ValidateNested()
-    @Type(() => LoaiCay)
-    loaicay: LoaiCay;
+    @IsNotEmpty({ message: 'Toạ độ lat không được để trống' })
+    lat: string;
+
+    @IsNotEmpty({ message: 'Toạ độ lng không được để trống' })
+    lng: string;
+
+
+    // @IsNotEmptyObject()
+    // @IsObject()
+    // @ValidateNested()
+    // @Type(() => LoaiCay)
+    // loaicay: LoaiCay;
 
 }

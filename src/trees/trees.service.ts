@@ -6,6 +6,7 @@ import { Tree, TreeDocument } from './schemas/tree.schema';
 import { SoftDeleteModel } from 'soft-delete-plugin-mongoose';
 import { IUser } from 'src/users/users.interface';
 import aqp from 'api-query-params';
+import mongoose from 'mongoose';
 
 @Injectable()
 export class TreesService {
@@ -56,8 +57,11 @@ export class TreesService {
 
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} tree`;
+  async findOne(id: string) {
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return `not found tree with ${id}`
+    }
+    return this.treeModel.findById(id)
   }
 
   async update(id: string, updateTreeDto: UpdateTreeDto, user: IUser) {

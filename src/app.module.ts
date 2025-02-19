@@ -7,6 +7,7 @@ import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { softDeletePlugin } from 'soft-delete-plugin-mongoose';
 import { TreesModule } from './trees/trees.module';
+import { FilesModule } from './files/files.module';
 
 @Module({
   imports: [
@@ -27,7 +28,8 @@ import { TreesModule } from './trees/trees.module';
     }),
     UsersModule,
     AuthModule,
-    TreesModule
+    TreesModule,
+    FilesModule
   ],
   controllers: [AppController],
   providers: [

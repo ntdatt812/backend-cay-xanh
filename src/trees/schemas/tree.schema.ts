@@ -13,6 +13,12 @@ export class Tree {
     khuvuc: string;
 
     @Prop()
+    lat: string;
+
+    @Prop()
+    lng: string;
+
+    @Prop()
     chieucao: number;
 
     @Prop()
@@ -20,6 +26,12 @@ export class Tree {
 
     @Prop()
     mota: string;
+
+    @Prop()
+    sohieu: string;
+
+    @Prop()
+    hientrang: string;
 
     @Prop({ type: Object })
     loaicay: {
