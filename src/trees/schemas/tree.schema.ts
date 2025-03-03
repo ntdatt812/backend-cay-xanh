@@ -28,16 +28,19 @@ export class Tree {
     mota: string;
 
     @Prop()
+    hinhanh: string;
+
+    @Prop()
     sohieu: string;
 
     @Prop()
     hientrang: string;
 
-    @Prop({ type: Object })
-    loaicay: {
-        _id: mongoose.Schema.Types.ObjectId,
-        tenloaicay: string
-    };
+    // @Prop({ type: Object })
+    // loaicay: {
+    //     _id: mongoose.Schema.Types.ObjectId,
+    //     tenloaicay: string
+    // };
 
     @Prop({ type: Object })
     createdBy: {

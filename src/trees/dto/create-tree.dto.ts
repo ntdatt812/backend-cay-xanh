@@ -16,8 +16,13 @@ export class CreateTreeDto {
     @IsNotEmpty({ message: 'Tên cây xanh không được để trống' })
     tencayxanh: string;
 
+    @IsNotEmpty({ message: 'Khu vực không được để trống' })
+    khuvuc: string;
+
     @IsNotEmpty({ message: 'Chiều cao không được để trống' })
     chieucao: number;
+
+    sohieu: string;
 
     @IsNotEmpty({ message: 'Mô tả không được để trống' })
     mota: string;
@@ -30,6 +35,17 @@ export class CreateTreeDto {
 
     @IsNotEmpty({ message: 'Toạ độ lng không được để trống' })
     lng: string;
+
+    @IsNotEmpty({ message: 'Chưa tải hình ảnh lên' })
+    hinhanh: string;
+
+    hientrang: string;
+
+
+
+
+
+
 
 
     // @IsNotEmptyObject()

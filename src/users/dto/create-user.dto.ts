@@ -12,8 +12,11 @@ export class CreateUserDto {
     @IsNotEmpty({ message: 'Password không được để trống' })
     password: string;
 
-    @IsNotEmpty({ message: 'Role không được để trống' })
-    role: string;
+    // @IsNotEmpty({ message: 'Role không được để trống' })
+    // role: string;
+
+    // @IsNotEmpty({ message: 'Chưa có ảnh avatar' })
+    // avatar: string;
 }
 
 export class RegisterUserDto {

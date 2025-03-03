@@ -23,7 +23,7 @@ export class UsersService {
     return hash
   }
   async create(createUserDto: CreateUserDto, @User() user: IUser) {
-    const { email, name, password, role } = createUserDto;
+    const { email, name, password } = createUserDto;
     const isExist = await this.userModel.findOne({ email });
     if (isExist) {
       throw new BadRequestException(`Email ${email} đã tồn tại trên hệ thống vui lòng sử dụng email khác!`);
@@ -34,7 +34,7 @@ export class UsersService {
       email,
       password: hashPassword,
       name,
-      role,
+      avatar: "user.png",
       createdBy: {
         _id: user._id,
         email: user.email

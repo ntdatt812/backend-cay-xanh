@@ -11,7 +11,6 @@ export class TreesController {
 
   @Post()
   create(@Body() createTreeDto: CreateTreeDto, @User() user: IUser) {
-    console.log("Check user: ", user)
     return this.treesService.create(createTreeDto, user);
   }
 
@@ -24,6 +23,13 @@ export class TreesController {
   ) {
     return this.treesService.findAll(+currentPage, +limit, qs);
   }
+  @Public()
+  @Get('/all')
+  @ResponseMessage("Fetch all trees without pagination")
+  findAllAll(@Query() qs: string) {
+    return this.treesService.findAllAll(qs);
+  }
+
 
   @Get(':id')
   @Public()

@@ -57,6 +57,25 @@ export class TreesService {
 
   }
 
+  async findAllAll(qs: string) {
+    // Sử dụng aqp để phân tích query string (bao gồm filter, sort, projection, population)
+    const { filter, sort, projection, population } = aqp(qs);
+
+    // Loại bỏ các thuộc tính phân trang nếu có
+    delete filter.current;
+    delete filter.pageSize;
+
+    // Truy vấn tất cả các cây theo filter, sort, projection và population (nếu có)
+    const result = await this.treeModel.find(filter)
+      .sort(sort as any)
+      .select(projection)      // Nếu bạn muốn giới hạn các trường trả về, nếu không, có thể bỏ qua
+      .populate(population)
+      .exec();
+    // Trả về danh sách cây (hoặc có thể bọc trong một object meta nếu cần)
+    return result;
+  }
+
+
   async findOne(id: string) {
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return `not found tree with ${id}`
