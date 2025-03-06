@@ -8,6 +8,8 @@ import { AuthModule } from './auth/auth.module';
 import { softDeletePlugin } from 'soft-delete-plugin-mongoose';
 import { TreesModule } from './trees/trees.module';
 import { FilesModule } from './files/files.module';
+import { FeedbacksModule } from './feedbacks/feedbacks.module';
+import { TasksModule } from './tasks/tasks.module';
 
 @Module({
   imports: [
@@ -29,7 +31,9 @@ import { FilesModule } from './files/files.module';
     UsersModule,
     AuthModule,
     TreesModule,
-    FilesModule
+    FilesModule,
+    FeedbacksModule,
+    TasksModule
   ],
   controllers: [AppController],
   providers: [
