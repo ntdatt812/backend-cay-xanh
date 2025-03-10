@@ -75,7 +75,6 @@ export class TreesService {
     return result;
   }
 
-
   async findOne(id: string) {
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return `not found tree with ${id}`

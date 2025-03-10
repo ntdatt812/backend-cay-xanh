@@ -1,6 +1,7 @@
 
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { HydratedDocument } from 'mongoose';
+import { Tree } from 'src/trees/schemas/tree.schema';
 
 export type FeedbackDocument = HydratedDocument<Feedback>;
 
@@ -27,7 +28,7 @@ export class Feedback {
     @Prop()
     content: string; // nội dung
 
-    @Prop()
+    @Prop({ type: mongoose.Schema.Types.ObjectId, ref: Tree.name })
     treeId: mongoose.Schema.Types.ObjectId;
 
     @Prop()
@@ -51,13 +52,15 @@ export class Feedback {
     @Prop({ type: Object })
     createdBy: {
         _id: mongoose.Schema.Types.ObjectId,
-        email: string
+        email: string,
+        name: string;
     }
 
     @Prop({ type: Object })
     updatedBy: {
         _id: mongoose.Schema.Types.ObjectId,
-        email: string
+        email: string,
+        name: string
     }
 
     @Prop({ type: Object })

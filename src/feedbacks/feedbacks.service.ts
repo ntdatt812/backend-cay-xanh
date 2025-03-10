@@ -46,7 +46,7 @@ export class FeedbacksService {
   }
 
   async findAll(currentPage: number, limit: number, qs: string) {
-    const { filter, sort, population } = aqp(qs);
+    const { filter, sort, population, projection } = aqp(qs);
     delete filter.current;
     delete filter.pageSize;
 
@@ -61,6 +61,7 @@ export class FeedbacksService {
       .skip(offset)
       .limit(defaultLimit)
       .sort(sort as any)
+      .select(projection as any)
       .populate(population)
       .exec();
 
@@ -94,7 +95,8 @@ export class FeedbacksService {
         status,
         updatedBy: {
           _id: user._id,
-          email: user.email
+          email: user.email,
+          name: user.name
         },
         $push: {
           history: {
@@ -102,7 +104,8 @@ export class FeedbacksService {
             updatedAt: new Date,
             updatedBy: {
               _id: user._id,
-              email: user.email
+              email: user.email,
+              name: user.name
             }
           }
         }

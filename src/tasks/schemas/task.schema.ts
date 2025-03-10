@@ -1,6 +1,7 @@
 
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { HydratedDocument } from 'mongoose';
+import { User } from 'src/users/schemas/user.schema';
 
 export type TaskDocument = HydratedDocument<Task>;
 
@@ -13,8 +14,8 @@ export class Task {
     @Prop()
     description: string;
 
-    @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true })
-    assignedTo: string; // ID của nhân viên được giao
+    @Prop({ type: mongoose.Schema.Types.ObjectId, ref: User.name })
+    assignedTo: mongoose.Schema.Types.ObjectId; // ID của nhân viên được giao
 
     @Prop({ enum: ['PENDING', 'IN_PROGRESS', 'COMPLETED'], default: 'PENDING' })
     status: string;
@@ -29,7 +30,8 @@ export class Task {
     @Prop({ type: Object })
     createdBy: {
         _id: mongoose.Schema.Types.ObjectId,
-        email: string
+        email: string,
+        name: string
     }
 
     @Prop({ type: Object })

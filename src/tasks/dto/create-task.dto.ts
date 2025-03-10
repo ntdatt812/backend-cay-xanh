@@ -1,16 +1,17 @@
-import { IsNotEmpty, IsString } from "class-validator";
+import { IsMongoId, IsNotEmpty, IsString } from "class-validator";
+import mongoose from "mongoose";
 
 export class CreateTaskDto {
 
-    @IsNotEmpty()
+    @IsNotEmpty({ message: "Nội dung công việc không được để trống!" })
     @IsString()
     title: string;
 
     @IsString()
     description?: string;
 
-    @IsNotEmpty()
-    @IsString()
-    assignedTo: string; // ID của nhân viên được giao
+    @IsNotEmpty({ message: "Id nhân viên không được để trống!" })
+    @IsMongoId({ message: "Id của nhân viên không hợp lệ!" })
+    assignedTo: mongoose.Schema.Types.ObjectId; // ID của nhân viên được giao
 
 }
