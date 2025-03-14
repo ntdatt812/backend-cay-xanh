@@ -22,6 +22,7 @@ export class CreateTreeDto {
     @IsNotEmpty({ message: 'Chiều cao không được để trống' })
     chieucao: number;
 
+    @IsNotEmpty({ message: 'Số hiệu không được để trống' })
     sohieu: string;
 
     @IsNotEmpty({ message: 'Mô tả không được để trống' })
@@ -40,6 +41,8 @@ export class CreateTreeDto {
     hinhanh: string;
 
     hientrang: string;
+
+    duongkinh: number;
 
 
 

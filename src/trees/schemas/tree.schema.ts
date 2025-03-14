@@ -36,6 +36,9 @@ export class Tree {
     @Prop()
     hientrang: string;
 
+    @Prop()
+    duongkinh: number;
+
     // @Prop({ type: Object })
     // loaicay: {
     //     _id: mongoose.Schema.Types.ObjectId,

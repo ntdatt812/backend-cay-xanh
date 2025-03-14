@@ -58,20 +58,47 @@ export class TreesService {
   }
 
   async findAllAll(qs: string) {
-    // Sử dụng aqp để phân tích query string (bao gồm filter, sort, projection, population)
     const { filter, sort, projection, population } = aqp(qs);
 
-    // Loại bỏ các thuộc tính phân trang nếu có
+    // Xóa tham số không liên quan
     delete filter.current;
     delete filter.pageSize;
 
-    // Truy vấn tất cả các cây theo filter, sort, projection và population (nếu có)
-    const result = await this.treeModel.find(filter)
+    const conditions = [];
+
+    // Lọc theo khu vực (nếu có)
+    if (filter.khuvuc) {
+      const khuVucFilter = Array.isArray(filter.khuvuc) ? { $in: filter.khuvuc } : filter.khuvuc;
+      conditions.push({ khuvuc: khuVucFilter });
+    }
+
+    // Lọc theo đường kính thân (nếu có)
+    if (filter.duongkinh) {
+      const values = Array.isArray(filter.duongkinh) ? filter.duongkinh : [filter.duongkinh];
+
+      const duongKinhConditions = [];
+      values.forEach((value) => {
+        if (value === "0-20") duongKinhConditions.push({ duongkinh: { $lte: 20 } });
+        if (value === "20-50") duongKinhConditions.push({ duongkinh: { $gt: 20, $lte: 50 } });
+        if (value === "50+") duongKinhConditions.push({ duongkinh: { $gt: 50 } });
+      });
+
+      if (duongKinhConditions.length > 0) {
+        conditions.push({ $or: duongKinhConditions });
+      }
+    }
+
+    // Tạo điều kiện lọc tổng hợp
+    const finalFilter = conditions.length > 0 ? { $and: conditions } : {};
+
+    // Thực hiện truy vấn MongoDB
+    const result = await this.treeModel
+      .find(finalFilter)
       .sort(sort as any)
-      .select(projection)      // Nếu bạn muốn giới hạn các trường trả về, nếu không, có thể bỏ qua
+      .select(projection)
       .populate(population)
       .exec();
-    // Trả về danh sách cây (hoặc có thể bọc trong một object meta nếu cần)
+
     return result;
   }
 
