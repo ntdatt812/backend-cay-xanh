@@ -11,7 +11,7 @@ export class Feedback {
     fullName: string;
 
     @Prop()
-    studentCode?: string;
+    report?: string;
 
     @Prop()
     phoneNumber: string;

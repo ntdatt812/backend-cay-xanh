@@ -16,17 +16,32 @@ export class TreesService {
     private treeModel: SoftDeleteModel<TreeDocument>) { }
 
   create(createTreeDto: CreateTreeDto, user: IUser) {
-    return this.treeModel.create(
-      {
-        ...createTreeDto,
-        createdBy: {
-          _id: user._id,
-          email: user.email
-        }
-      }
+    const { chieucao, chuvi, hientrang,
+      hinhanh, khuvuc, lat, lng, mota, namtrong,
+      sohieu, tencayxanh } = createTreeDto;
 
-    )
+    const duongkinh = chuvi / Math.PI;
+
+    return this.treeModel.create({
+      chieucao,
+      chuvi,
+      duongkinh,
+      hientrang,
+      hinhanh,
+      khuvuc,
+      lat,
+      lng,
+      mota,
+      namtrong,
+      sohieu,
+      tencayxanh,
+      createdBy: {
+        _id: user._id,
+        email: user.email
+      }
+    });
   }
+
 
   async findAll(currentPage: number, limit: number, qs: string) {
     const { filter, sort, projection, population } = aqp(qs);
@@ -59,20 +74,16 @@ export class TreesService {
 
   async findAllAll(qs: string) {
     const { filter, sort, projection, population } = aqp(qs);
-
-    // Xóa tham số không liên quan
     delete filter.current;
     delete filter.pageSize;
 
     const conditions = [];
 
-    // Lọc theo khu vực (nếu có)
     if (filter.khuvuc) {
       const khuVucFilter = Array.isArray(filter.khuvuc) ? { $in: filter.khuvuc } : filter.khuvuc;
       conditions.push({ khuvuc: khuVucFilter });
     }
 
-    // Lọc theo đường kính thân (nếu có)
     if (filter.duongkinh) {
       const values = Array.isArray(filter.duongkinh) ? filter.duongkinh : [filter.duongkinh];
 
@@ -88,10 +99,8 @@ export class TreesService {
       }
     }
 
-    // Tạo điều kiện lọc tổng hợp
     const finalFilter = conditions.length > 0 ? { $and: conditions } : {};
 
-    // Thực hiện truy vấn MongoDB
     const result = await this.treeModel
       .find(finalFilter)
       .sort(sort as any)
@@ -110,16 +119,33 @@ export class TreesService {
   }
 
   async update(id: string, updateTreeDto: UpdateTreeDto, user: IUser) {
-    return await this.treeModel.updateOne(
+
+    const { chieucao, chuvi, hientrang,
+      hinhanh, khuvuc, lat, lng, mota, namtrong,
+      sohieu, tencayxanh } = updateTreeDto;
+
+    const duongkinh = chuvi / Math.PI;
+
+    return this.treeModel.updateOne(
       { _id: id },
       {
-        ...updateTreeDto,
-        updatedBy: {
+        chieucao,
+        chuvi,
+        duongkinh,
+        hientrang,
+        hinhanh,
+        khuvuc,
+        lat,
+        lng,
+        mota,
+        namtrong,
+        sohieu,
+        tencayxanh,
+        createdBy: {
           _id: user._id,
           email: user.email
         }
-      }
-    );
+      });
   }
 
   async remove(id: string, user: IUser) {

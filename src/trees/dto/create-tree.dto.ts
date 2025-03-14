@@ -42,14 +42,7 @@ export class CreateTreeDto {
 
     hientrang: string;
 
-    duongkinh: number;
-
-
-
-
-
-
-
+    chuvi: number;
 
     // @IsNotEmptyObject()
     // @IsObject()

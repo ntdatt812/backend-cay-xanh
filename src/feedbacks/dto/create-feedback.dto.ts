@@ -7,7 +7,7 @@ export class CreateFeedbackDto {
     @IsNotEmpty({ message: 'Họ tên không được để trống', })
     fullName: string;
 
-    studentCode?: string;
+    report?: string;
 
     @IsNotEmpty({ message: 'Số điện thoại không được để trống', })
     phoneNumber: string;

@@ -1,6 +1,5 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateFeedbackDto } from './dto/create-feedback.dto';
-import { UpdateFeedbackDto } from './dto/update-feedback.dto';
 import { IUser } from 'src/users/users.interface';
 import { InjectModel } from '@nestjs/mongoose';
 import { Feedback, FeedbackDocument } from './schemas/feedback.schema';
@@ -17,12 +16,12 @@ export class FeedbacksService {
   ) { }
 
   async create(createFeedbackDto: CreateFeedbackDto, user: IUser) {
-    const { fullName, content, hinhanh, phoneNumber, title, treeId, studentCode, emailFeedback } = createFeedbackDto;
+    const { fullName, content, hinhanh, phoneNumber, title, treeId, report, emailFeedback } = createFeedbackDto;
     const { _id, email } = user;
 
     const newFeedback = await this.feedbackModel.create({
       fullName, phoneNumber, content, title,
-      studentCode, emailFeedback, hinhanh, treeId,
+      emailFeedback, hinhanh, treeId,
       status: "PENDING",
       userId: _id,
       createdBy: { _id, email },
@@ -84,7 +83,7 @@ export class FeedbacksService {
     return await this.feedbackModel.findById(id);
   }
 
-  async update(_id: string, status: string, user: IUser) {
+  async update(_id: string, status: string, report: string, user: IUser) {
     if (!mongoose.Types.ObjectId.isValid(_id)) {
       throw new BadRequestException("not found resume")
     }
@@ -93,6 +92,7 @@ export class FeedbacksService {
       { _id },
       {
         status,
+        report,
         updatedBy: {
           _id: user._id,
           email: user.email,

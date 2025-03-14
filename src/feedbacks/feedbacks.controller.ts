@@ -1,7 +1,6 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
 import { FeedbacksService } from './feedbacks.service';
 import { CreateFeedbackDto } from './dto/create-feedback.dto';
-import { UpdateFeedbackDto } from './dto/update-feedback.dto';
 import { ResponseMessage, User } from 'src/decorator/customize';
 import { IUser } from 'src/users/users.interface';
 
@@ -39,9 +38,15 @@ export class FeedbacksController {
 
   @Patch(':id')
   @ResponseMessage("Update status feedback")
-  updateStatus(@Param('id') id: string, @Body("status") status: string, @User() user: IUser) {
-    return this.feedbacksService.update(id, status, user);
+  updateStatus(
+    @Param('id') id: string,
+    @Body("status") status: string,
+    @Body("report") report: string,
+    @User() user: IUser
+  ) {
+    return this.feedbacksService.update(id, status, report, user);
   }
+
   @Delete(':id')
   @ResponseMessage("Delete a feedback by id")
   remove(@Param('id') id: string, @User() user: IUser) {
