@@ -1,15 +1,18 @@
-import { IsOptional, IsString, IsIn } from 'class-validator';
+import { IsNotEmpty } from 'class-validator';
 
 export class UpdateTaskDto {
     // @IsOptional()
     // @IsIn(['PENDING', 'IN_PROGRESS', 'COMPLETED'])
     // status?: string;
 
-    @IsOptional()
-    @IsString()
-    report?: string;
+    @IsNotEmpty({ message: "Nội dung báo cáo không được để trống!" })
+    report: string;
 
-    @IsOptional()
-    @IsString()
-    imageUrl?: string;
+
+    @IsNotEmpty({ message: "Hình ảnh báo cáo không được để trống!" })
+    imageUrl: string;
+
+
+    @IsNotEmpty({ message: "Trạng thái báo cáo không được để trống!" })
+    status: string;
 }

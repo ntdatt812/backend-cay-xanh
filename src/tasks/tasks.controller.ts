@@ -34,11 +34,11 @@ export class TasksController {
   @ResponseMessage("Fetch all task by id employ")
   getTasksByUser(
     @Param('userId') userId: string,
-    @Query('currentPage') currentPage: number = 1,
-    @Query('limit') limit: number = 10,
+    @Query('currentPage') currentPage: number,
+    @Query('limit') limit: number,
     @Query() qs: string
   ) {
-    return this.tasksService.findByUserId(userId, currentPage, limit, qs);
+    return this.tasksService.findByUserId(userId, +currentPage, +limit, qs);
   }
 
   @Patch(':id')

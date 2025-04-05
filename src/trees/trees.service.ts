@@ -20,7 +20,7 @@ export class TreesService {
       hinhanh, khuvuc, lat, lng, mota, namtrong,
       sohieu, tencayxanh } = createTreeDto;
 
-    const duongkinh = chuvi / Math.PI;
+    const duongkinh = (chuvi / Math.PI).toFixed(2);
 
     return this.treeModel.create({
       chieucao,
@@ -41,7 +41,6 @@ export class TreesService {
       }
     });
   }
-
 
   async findAll(currentPage: number, limit: number, qs: string) {
     const { filter, sort, projection, population } = aqp(qs);
@@ -79,19 +78,27 @@ export class TreesService {
 
     const conditions = [];
 
+    // Lọc theo khu vực nếu có
     if (filter.khuvuc) {
       const khuVucFilter = Array.isArray(filter.khuvuc) ? { $in: filter.khuvuc } : filter.khuvuc;
       conditions.push({ khuvuc: khuVucFilter });
     }
 
     if (filter.duongkinh) {
-      const values = Array.isArray(filter.duongkinh) ? filter.duongkinh : [filter.duongkinh];
+      let values = filter.duongkinh;
+
+      if (typeof values === "object" && values.$in) {
+        values = values.$in;
+      }
+
+      values = Array.isArray(values) ? values : [values];
 
       const duongKinhConditions = [];
+
       values.forEach((value) => {
-        if (value === "0-20") duongKinhConditions.push({ duongkinh: { $lte: 20 } });
-        if (value === "20-50") duongKinhConditions.push({ duongkinh: { $gt: 20, $lte: 50 } });
-        if (value === "50+") duongKinhConditions.push({ duongkinh: { $gt: 50 } });
+        if (value === "0-20") duongKinhConditions.push({ duongkinh: { $gte: 0, $lte: 20 } });
+        else if (value === "21-50") duongKinhConditions.push({ duongkinh: { $gt: 20, $lte: 50 } });
+        else if (value === "50+") duongKinhConditions.push({ duongkinh: { $gt: 50 } });
       });
 
       if (duongKinhConditions.length > 0) {

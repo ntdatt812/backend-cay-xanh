@@ -70,7 +70,6 @@ export class TasksService {
       { _id: id },
       {
         ...updateTaskDto,
-        status: "COMPLETED",
         updatedBy: {
           _id: user._id,
           email: user.email
