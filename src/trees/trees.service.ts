@@ -7,13 +7,15 @@ import { SoftDeleteModel } from 'soft-delete-plugin-mongoose';
 import { IUser } from 'src/users/users.interface';
 import aqp from 'api-query-params';
 import mongoose from 'mongoose';
+import { User, UserDocument } from 'src/users/schemas/user.schema';
 
 @Injectable()
 export class TreesService {
 
   constructor(
-    @InjectModel(Tree.name)
-    private treeModel: SoftDeleteModel<TreeDocument>) { }
+    @InjectModel(Tree.name) private treeModel: SoftDeleteModel<TreeDocument>,
+    @InjectModel(User.name) private userModel: SoftDeleteModel<UserDocument>,
+  ) { }
 
   create(createTreeDto: CreateTreeDto, user: IUser) {
     const { chieucao, chuvi, hientrang,
@@ -169,5 +171,71 @@ export class TreesService {
     return this.treeModel.softDelete(
       { _id: id },
     );
+  }
+
+  async getDashboardQLCX() {
+    // Tổng số cây chưa bị xóa
+    const totalTreesAgg = await this.treeModel.aggregate([
+      { $match: { isDeleted: false } },
+      { $count: 'total' }
+    ]);
+    const totalTrees = totalTreesAgg[0]?.total || 0;
+
+    // Số cây theo đường kính (dạng 0-20, 21-50, 50+)
+    const diameterAgg = await this.treeModel.aggregate([
+      { $match: { isDeleted: false } },
+      {
+        $facet: {
+          '0-20': [
+            { $match: { duongkinh: { $gte: 0, $lte: 20 } } },
+            { $count: 'count' }
+          ],
+          '21-50': [
+            { $match: { duongkinh: { $gt: 20, $lte: 50 } } },
+            { $count: 'count' }
+          ],
+          '50+': [
+            { $match: { duongkinh: { $gt: 50 } } },
+            { $count: 'count' }
+          ]
+        }
+      }
+    ]);
+
+    const treeDiameter = {
+      'cayLoai1': diameterAgg[0]['0-20'][0]?.count || 0,
+      'cayLoai2': diameterAgg[0]['21-50'][0]?.count || 0,
+      'cayLoai3': diameterAgg[0]['50+'][0]?.count || 0
+    };
+
+    // Số khu vực duy nhất có cây chưa bị xóa
+    const uniqueRegionsAgg = await this.treeModel.aggregate([
+      { $match: { isDeleted: false } },
+      { $group: { _id: '$khuvuc' } },
+      { $count: 'total' }
+    ]);
+    const uniqueRegions = uniqueRegionsAgg[0]?.total || 0;
+
+    // Cây mới trồng trong 5 ngày gần nhất (chưa bị xóa)
+    const fiveDaysAgo = new Date();
+    fiveDaysAgo.setDate(fiveDaysAgo.getDate() - 5);
+
+    const newTreesAgg = await this.treeModel.aggregate([
+      {
+        $match: {
+          isDeleted: false,
+          createdAt: { $gte: fiveDaysAgo }
+        }
+      },
+      { $count: 'newTrees' }
+    ]);
+    const newTrees = newTreesAgg[0]?.newTrees || 0;
+
+    return {
+      totalTrees,
+      treeDiameter,
+      uniqueRegions,
+      newTrees
+    };
   }
 }

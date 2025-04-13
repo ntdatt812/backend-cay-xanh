@@ -23,13 +23,13 @@ export class TreesController {
   ) {
     return this.treesService.findAll(+currentPage, +limit, qs);
   }
+
   @Public()
   @Get('/all')
   @ResponseMessage("Fetch all trees without pagination")
   findAllAll(@Query() qs: string) {
     return this.treesService.findAllAll(qs);
   }
-
 
   @Get(':id')
   @Public()
@@ -53,5 +53,12 @@ export class TreesController {
 
   ) {
     return this.treesService.remove(id, user);
+  }
+
+  @Public()
+  @Post('/dashboard')
+  @ResponseMessage("Dashboard quản lý cây xanh")
+  dashboard() {
+    return this.treesService.getDashboardQLCX();
   }
 }
