@@ -40,9 +40,21 @@ export class CreateTreeDto {
     @IsNotEmpty({ message: 'Chưa tải hình ảnh lên' })
     hinhanh: string;
 
+    @IsNotEmpty({ message: 'Hiện trạng không được để trống' })
     hientrang: string;
 
+    @IsNotEmpty({ message: 'Chu vi không được để trống' })
     chuvi: number;
+
+    @IsNotEmpty({ message: 'Nước không được để trống' })
+    nuoc: string;
+
+    @IsNotEmpty({ message: 'Phân không được để trống' })
+    phan: string;
+
+    @IsNotEmpty({ message: 'Sâu bệnh không được để trống' })
+    saubenh: string;
+
 
     // @IsNotEmptyObject()
     // @IsObject()

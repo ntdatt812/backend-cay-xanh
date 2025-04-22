@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateTreeDto } from './dto/create-tree.dto';
 import { UpdateTreeDto } from './dto/update-tree.dto';
 import { InjectModel } from '@nestjs/mongoose';
@@ -17,30 +17,26 @@ export class TreesService {
     @InjectModel(User.name) private userModel: SoftDeleteModel<UserDocument>,
   ) { }
 
-  create(createTreeDto: CreateTreeDto, user: IUser) {
-    const { chieucao, chuvi, hientrang,
-      hinhanh, khuvuc, lat, lng, mota, namtrong,
-      sohieu, tencayxanh } = createTreeDto;
-
-    const duongkinh = (chuvi / Math.PI).toFixed(2);
+  async create(createTreeDto: CreateTreeDto, user: IUser) {
+    const duongkinh = (createTreeDto.chuvi / Math.PI).toFixed(2);
 
     return this.treeModel.create({
-      chieucao,
-      chuvi,
+      ...createTreeDto,
       duongkinh,
-      hientrang,
-      hinhanh,
-      khuvuc,
-      lat,
-      lng,
-      mota,
-      namtrong,
-      sohieu,
-      tencayxanh,
+      history: [
+        {
+          ...createTreeDto,
+          createdBy: {
+            _id: user._id,
+            email: user.email,
+            name: user.name,
+          }
+        }
+      ],
       createdBy: {
         _id: user._id,
-        email: user.email
-      }
+        email: user.email,
+      },
     });
   }
 
@@ -127,17 +123,23 @@ export class TreesService {
     return this.treeModel.findById(id)
   }
 
-  async update(id: string, updateTreeDto: UpdateTreeDto, user: IUser) {
+  async update(_id: string, updateTreeDto: UpdateTreeDto, user: IUser) {
+    if (!mongoose.Types.ObjectId.isValid(_id)) {
+      throw new BadRequestException("Not found tree");
+    }
 
-    const { chieucao, chuvi, hientrang,
-      hinhanh, khuvuc, lat, lng, mota, namtrong,
-      sohieu, tencayxanh } = updateTreeDto;
+    const {
+      chieucao, chuvi, hientrang, hinhanh,
+      khuvuc, lat, lng, mota, namtrong,
+      sohieu, tencayxanh, nuoc, phan, saubenh, history
+    } = updateTreeDto;
 
-    const duongkinh = chuvi / Math.PI;
+    const duongkinh = parseFloat((chuvi / Math.PI).toFixed(2));
 
     return this.treeModel.updateOne(
-      { _id: id },
+      { _id },
       {
+
         chieucao,
         chuvi,
         duongkinh,
@@ -150,12 +152,34 @@ export class TreesService {
         namtrong,
         sohieu,
         tencayxanh,
+        nuoc,
+        phan,
+        saubenh,
         createdBy: {
           _id: user._id,
-          email: user.email
-        }
-      });
+          email: user.email,
+        },
+        $push: {
+          history: {
+            chieucao,
+            duongkinh,
+            chuvi,
+            hinhanh,
+            nuoc,
+            phan,
+            saubenh,
+            updatedAt: new Date(),
+            updatedBy: {
+              _id: user._id,
+              email: user.email,
+              name: user.name,
+            },
+          },
+        },
+      }
+    );
   }
+
 
   async remove(id: string, user: IUser) {
     await this.treeModel.updateOne(
@@ -174,14 +198,12 @@ export class TreesService {
   }
 
   async getDashboardQLCX() {
-    // Tổng số cây chưa bị xóa
     const totalTreesAgg = await this.treeModel.aggregate([
       { $match: { isDeleted: false } },
       { $count: 'total' }
     ]);
     const totalTrees = totalTreesAgg[0]?.total || 0;
 
-    // Số cây theo đường kính (dạng 0-20, 21-50, 50+)
     const diameterAgg = await this.treeModel.aggregate([
       { $match: { isDeleted: false } },
       {
@@ -202,13 +224,13 @@ export class TreesService {
       }
     ]);
 
+
     const treeDiameter = {
       'cayLoai1': diameterAgg[0]['0-20'][0]?.count || 0,
       'cayLoai2': diameterAgg[0]['21-50'][0]?.count || 0,
       'cayLoai3': diameterAgg[0]['50+'][0]?.count || 0
     };
 
-    // Số khu vực duy nhất có cây chưa bị xóa
     const uniqueRegionsAgg = await this.treeModel.aggregate([
       { $match: { isDeleted: false } },
       { $group: { _id: '$khuvuc' } },
@@ -216,7 +238,6 @@ export class TreesService {
     ]);
     const uniqueRegions = uniqueRegionsAgg[0]?.total || 0;
 
-    // Cây mới trồng trong 5 ngày gần nhất (chưa bị xóa)
     const fiveDaysAgo = new Date();
     fiveDaysAgo.setDate(fiveDaysAgo.getDate() - 5);
 

@@ -42,11 +42,38 @@ export class Tree {
     @Prop()
     chuvi: number;
 
+    @Prop()
+    nuoc: string;
+
+    @Prop()
+    phan: string;
+
+    @Prop()
+    saubenh: string;
+
     // @Prop({ type: Object })
     // loaicay: {
     //     _id: mongoose.Schema.Types.ObjectId,
     //     tenloaicay: string
     // };
+
+    @Prop({ type: mongoose.Schema.Types.Array })
+    history: {
+        chieucao: number;
+        duongkinh: number;
+        chuvi: number;
+        hinhanh: string;
+        nuoc: string;
+        phan: string;
+        saubenh: string;
+        updatedAt: Date;
+        updatedBy: {
+            _id: mongoose.Schema.Types.ObjectId;
+            email: string;
+            name: string;
+        };
+    }[];
+
 
     @Prop({ type: Object })
     createdBy: {

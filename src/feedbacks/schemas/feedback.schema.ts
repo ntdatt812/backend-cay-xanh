@@ -26,7 +26,7 @@ export class Feedback {
     title: string;
 
     @Prop()
-    content: string; // nội dung
+    content: string;
 
     @Prop({ type: mongoose.Schema.Types.ObjectId, ref: Tree.name })
     treeId: mongoose.Schema.Types.ObjectId;
